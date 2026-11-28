@@ -6,11 +6,10 @@ import java.io.FileNotFoundException;
 
 public class FileHandler {
 
-    public int countTxtLines(String filename) {
+    public int countTxtLines(String fileName) {
+        int count = 0;
         try {
-
-            int count = 0;
-            Scanner fileReader = new Scanner(new File(filename));
+            Scanner fileReader = new Scanner(new File(fileName));
 
             while (fileReader.hasNextLine()) {
                 fileReader.nextLine();
@@ -20,17 +19,19 @@ public class FileHandler {
             return count;
 
         } catch (FileNotFoundException ex) {
-            System.out.println("ERROR - Unable to locate file.");
+            System.out.println("ERROR - Unable to locate file: " + fileName);
         }
         return 0;
     }
 
     public Node[] readNodes(String fileName) {
+
         int count = countTxtLines(fileName);
         int index = 0;
         Node[] nodes = new Node[count];
-        Scanner nodeReader = new Scanner(new File(fileName));
 
+        try {
+            Scanner nodeReader = new Scanner(new File(fileName));
             while (nodeReader.hasNextLine()) {
                 String line = nodeReader.nextLine();
                 String[] tokens = line.split(",");
@@ -39,34 +40,43 @@ public class FileHandler {
                 int x = Integer.parseInt(tokens[1]);
                 int y = Integer.parseInt(tokens[2]);
 
-            if (tokens.length == 4) {
-                type = tokens[3];
-            } else {
-                type = "regular node";
-            }
+                if (tokens.length == 4) {
+                    type = tokens[3];
+                } else {
+                    type = "Regular";
+                }
 
-            nodes[index] = new Node(id, x, y, type);
-            index++;
+                nodes[index] = new Node(id, x, y, type);
+                index++;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ERROR - Unable to locate file: " + fileName);
         }
         return nodes;
     }
 
+
     public Arc[] readArcs(String fileName){
-        int count = countTxtLines(fileName);
-        int index = 0;
-        Arc[] arcs = new Arc[count];
-        Scanner arcReader = new Scanner(new File(fileName));
 
-        while (arcReader.hasNextLine()){
-            String line = arcReader.nextLine();
-            String[] tokens = line.split(",");
-            String type;
-            int firstNode = Integer.parseInt(tokens[0]);
-            int secondNode = Integer.parseInt(tokens[1]);
-            int arcLength = Integer.parseInt(tokens[2]);
+                int count = countTxtLines(fileName);
+                int index = 0;
+                Arc[] arcs = new Arc[count];
+        try {
+             Scanner arcReader = new Scanner(new File(fileName));
+             while (arcReader.hasNextLine()) {
+                String line = arcReader.nextLine();
+                String[] tokens = line.split(",");
+                int firstNode = Integer.parseInt(tokens[0]);
+                int secondNode = Integer.parseInt(tokens[1]);
+                double arcLength = Double.parseDouble(tokens[2]);
 
-        }
-        return arcs;
+                arcs[index] = new Arc(firstNode,secondNode, arcLength);
+                index++;
+
+             }
+        } catch (FileNotFoundException ex) {
+                System.out.println("ERROR - Unable to locate file: " +fileName);
+        } return arcs;
     }
 }
 
